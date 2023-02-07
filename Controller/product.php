@@ -2,6 +2,10 @@
     declare(strict_types=1);
 
     require_once '../App/Class/Product.php';
+    require_once '../App/Class/Subscriber.php';
+
+    $productClass = new Product();
+    $subscriberClass = new Subscriber();
 
     require_once '../connection.php';
     session_start();
@@ -41,6 +45,9 @@
 
                         header("location: ./product.php?id=$productId");
                     } else {
+
+                        //   Chiamo la classe per salvare i dati. 
+                        // $productClass->update($params, $productId);
                         $query = $pdo->prepare('UPDATE products SET sku=?, name=?, description=?, price=?, quantity=? WHERE entity_id=?');
                         $params[] = $productId;
                         
@@ -63,11 +70,8 @@
                     } else {
 
                         // Chiamo la classe per salvare i dati. 
-                        $product = new Product();
-                        $product->save($params);
-
-                        $_SESSION['message'] = 'Product added';
-                        $_SESSION['success'] = 'success';
+                        $productClass->save($params);
+                      
 
                         header("location: ./index_products.php");
                     }
@@ -80,17 +84,14 @@
                 break;
 
             case 'delete':
-                $query = $pdo->prepare('DELETE FROM products WHERE entity_id=?');
-                $query->execute([$productId]);
-                
-                $_SESSION['message'] = 'Product eliminated';
-                $_SESSION['success'] = 'danger';
+
+                // Chiamo la classe per eliminare i dati. 
+                $productClass->delete($productId);
 
                 header("location: ./index_products.php");
                 break;
 
             default:
-                // intentionally left blank
         }
 
         $subscribers = [];
@@ -129,7 +130,9 @@
                 $_SESSION['message'] = 'E-mail sent to: ' . implode( ', ',  $mailSubscribers). '.';
                 $_SESSION['success'] = 'success';
 
-                // TODO delete subscribers
+                // Class delete subscriber;
+                $subscriberClass->deleteSubProduct($productId);
+
                 $query = $pdo->prepare('DELETE FROM subscribers WHERE product_id=?');
                 $query->execute([$product['entity_id']]);
             }

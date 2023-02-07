@@ -6,6 +6,7 @@ class Product{
     
     private $dsn;
     private $options;
+    private $pdo;
     
     function __construct() {
         // Load env vars
@@ -23,15 +24,14 @@ class Product{
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES   => false,
         ];
+
+        $this->pdo = new PDO($this->dsn, $_ENV['DB_USERNAME'], $_ENV['DB_PASSWORD'], $this->options);
     }
 
     public function index(){
         
         try {
-            $pdo = new PDO($this->dsn, $_ENV['DB_USERNAME'], $_ENV['DB_PASSWORD'], $this->options);
-    
-            // Get products
-            $query = $pdo->query('SELECT p.*, count(s.product_id) as subscribers FROM products p LEFT JOIN subscribers s ON p.entity_id=s.product_id GROUP BY p.entity_id ORDER BY entity_id ASC');
+            $query = $this->pdo->query('SELECT p.*, count(s.product_id) as subscribers FROM products p LEFT JOIN subscribers s ON p.entity_id=s.product_id GROUP BY p.entity_id ORDER BY entity_id ASC');
     
             while ($row = $query->fetch())
             {
@@ -46,27 +46,26 @@ class Product{
 
     public function save($params){
 
-        $pdo = new PDO($this->dsn, $_ENV['DB_USERNAME'], $_ENV['DB_PASSWORD'], $this->options);
-
-        $query = $pdo->prepare('INSERT INTO products (sku, name, description, price, quantity) VALUES (?, ?, ?, ?, ?)');
+        $query = $this->pdo->prepare('INSERT INTO products (sku, name, description, price, quantity) VALUES (?, ?, ?, ?, ?)');
         $query->execute($params);
-        
+
+        $_SESSION['message'] = 'Product added';
+        $_SESSION['success'] = 'success';
     }
 
-    // public function update($sku, $description, $name, $price, $qty, $productId) {
+    public function update($params, $productId) {
 
-    //     $pdo = new PDO($this->dsn, $_ENV['DB_USERNAME'], $_ENV['DB_PASSWORD'], $this->options);
+        $params[] = $productId;
+        $query = $this->pdo->prepare('UPDATE products SET sku=?, name=?, description=?, price=?, quantity=? WHERE entity_id=?');
+        $query->execute($params);
+    }
 
-    //     $params = [$sku, $name, $description, $price, $qty];
-        
-    //     $query = $pdo->prepare('UPDATE products SET sku=?, name=?, description=?, price=?, quantity=? WHERE entity_id=?');
-       
-    //     $params[] = $productId;
-       
-    //     $query->execute($params);
-    // }
+    public function delete($productId) {
 
-    // public function delete() {
+        $query = $this->pdo->prepare('DELETE FROM products WHERE entity_id=?');
+        $query->execute([$productId]);
 
-    // }
+        $_SESSION['message'] = 'Product eliminated';
+        $_SESSION['success'] = 'danger';
+    }
 }

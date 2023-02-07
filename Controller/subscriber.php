@@ -1,6 +1,9 @@
 <?php declare(strict_types=1);
-    require_once '../connection.php';
     session_start();
+
+    require_once '../connection.php';
+    require_once '../App/Class/Subscriber.php';
+    $subscriberClass = new Subscriber();
     
     try {
         $productId = (int)($_GET['product_id'] ?? 0);
@@ -20,8 +23,9 @@
             if (!$entityId) {
                 throw new \Exception('No entity id provided');
             }
-            $query = $pdo->prepare('DELETE FROM subscribers WHERE entity_id=?');
-            $query->execute([$entityId]);
+           
+            // Class delete subscriber.
+            $subscriberClass->delete($entityId);
 
             $_SESSION['message'] = 'Subscriber eliminated';
             $_SESSION['success'] = 'danger';
@@ -47,9 +51,10 @@
                 $_SESSION['success'] = 'danger';
 
             } else {
-                $query = $pdo->prepare('INSERT INTO subscribers (product_id, email) VALUES (?, ?)');
-                $query->execute([$productId, $email]);
-        
+
+                // Class save subscriber.
+                $subscriberClass->save($productId, $email);
+
                 $_SESSION['message'] = 'Subscriber added';
                 $_SESSION['success'] = 'success';
             }
