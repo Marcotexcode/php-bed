@@ -42,8 +42,8 @@
                 throw new \Exception('Invalid email provided');
             }
 
-            $query = $pdo->prepare('SELECT * FROM subscribers WHERE email=?');
-            $query->execute([$email]);
+            $query = $pdo->prepare('SELECT * FROM subscribers WHERE email=? AND product_id=?');
+            $query->execute([$email, $productId]);
             $subscribers = $query->fetchAll(PDO::FETCH_ASSOC);
 
             if(count($subscribers)) {
