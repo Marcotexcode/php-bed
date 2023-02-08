@@ -13,7 +13,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-12 my-4 d-grid gap-2">
-                                    <a class="btn btn-outline-secondary" href="index_products.php">Return</a>
+                                    <a class="btn btn-outline-secondary" href="index.php">Return</a>
                                 </div>
                                 <?php if ($product['entity_id']): ?>
                                     <form class="d-grid gap-2" method="post">

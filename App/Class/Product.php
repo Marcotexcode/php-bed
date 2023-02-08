@@ -1,4 +1,4 @@
-<?php 
+<?php declare(strict_types=1);
 
 require_once '../vendor/autoload.php';
 
@@ -29,6 +29,7 @@ class Product{
     }
 
     public function index(){
+        session_start();
         
         try {
             $query = $this->pdo->query('SELECT p.*, count(s.product_id) as subscribers FROM products p LEFT JOIN subscribers s ON p.entity_id=s.product_id GROUP BY p.entity_id ORDER BY entity_id ASC');

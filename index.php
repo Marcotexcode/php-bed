@@ -1,5 +1,5 @@
 <?php
 
     // Redirect to view.
-    header("location: view/index_products.php");
+    header("location: view/index.php");
     exit();

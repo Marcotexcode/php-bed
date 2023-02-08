@@ -1,5 +1,4 @@
-<?php 
-    declare(strict_types=1);
+<?php declare(strict_types=1);
 
     require_once '../App/Class/Product.php';
     require_once '../App/Class/Subscriber.php';
@@ -54,7 +53,7 @@
                         $_SESSION['message'] = 'Modified product';
                         $_SESSION['success'] = 'success';
 
-                        header("location: ./index_products.php");
+                        header("location: ./index.php");
                     }
 
                 } else {
@@ -71,9 +70,8 @@
 
                         // Chiamo la classe per salvare i dati. 
                         $productClass->save($params);
-                      
 
-                        header("location: ./index_products.php");
+                        header("location: ./index.php");
                     }
                 }
                 $query->execute($params);
@@ -88,7 +86,7 @@
                 // Chiamo la classe per eliminare i dati. 
                 $productClass->delete($productId);
 
-                header("location: ./index_products.php");
+                header("location: ./index.php");
                 break;
 
             default:
